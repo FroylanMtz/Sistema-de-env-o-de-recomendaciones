@@ -1,0 +1,293 @@
+\section{Desarrollo del problema}
+Para la aplicacion de lo visto en el marco teorico se veran ahora tres aplicaciones del algoritmo de Q-Learning con dos diferentes problemas que son parte de los entornos ofrecidos por la biblioteca OpenAI los cuales se describen a continuacion:
+
+\subsection{Entorno FrozenLake-v0}
+FrozenLake-v0 es un entorno estocastico con un espacio de 16 estados y 4 posibles acciones.
+
+El agente controla el movimiento de un personaje en un mundo de cuadrícula. Algunas fichas de la cuadrícula son accesibles para caminar, y otras conducen a que el agente caiga al agua. Además, la dirección de movimiento del agente es incierta y solo depende parcialmente de la dirección elegida. El agente es recompensado por encontrar un camino transitable a una ficha de meta.
+
+El entorno esta descrito con el siguiente enunciado:
+
+El invierno esta aqui. Tú y tus amigos estaban lanzando un frisbee en el parque cuando hiciste un lanzamiento salvaje que dejó el frisbee en el medio del lago. El agua está mayormente congelada, pero hay algunos agujeros donde el hielo se derritió. Si entras en uno de esos agujeros, caerás en el agua helada. En este momento, hay una escasez internacional de frisbee, por lo que es absolutamente imprescindible que navegues por el lago y recuperes el disco. Sin embargo, el hielo es resbaladizo, por lo que no siempre te moverás en la dirección que deseas.
+
+El tablero esta descrito usando una regilla como la siguiente:
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics*[width=6cm,height=6cm,keepaspectratio]{figuras/Frozen-Lake} 
+	\caption{Tablero del FrozenLake}
+	\label{fig:Frozen-Lake}
+\end{figure}
+
+S: Punto inicial, seguro.
+F: Superficie congelada, seguro.
+H: Hoyo, cai en las profunidades.
+G: Meta, donde el frisbee esta localizado.
+
+\subsection{Q-Table: Solucion a FrozenLake-v0 con la ayuda de tablas de decision}
+
+El algoritmo Q-Learning es un algoritmo perteneciente a la familia de los algoritmos de aprendizaje por refuerzo, es uno de los mas usados en esta rama siendo fuera de politica y de metodo, por ello su flexibilidad al momento de elegir un metodo para elegir la mejor accion a tomar por el agente. El algoritmo tiene algunas variantes dependiendo en su aplicacion siendo dos de estas 1) por medio de tablas de decision que son llenadas y refinidas  conforme para el tiempo de ejecucion y 2) aplciando complejos modelso como los son las redes neuronales, en esos problemas en los cuales almacenar valores en las tablas no es una accion factible ni escalable.
+
+Una tabla Q esta dada por los estados: los posibles estados que puede tomar el entorno y por el numero de acciones que puede realizar.
+
+Siendo asi en el problema de FrozenLake-v0 teniendo una tabla Q de 16x4 en la cual se guardan valores que deciden que accion tomara el agente para llegar hasta su objetivo.
+
+La formula que se aplica en este tipo de problemas para llenar o actualizar la tabla en cada uno de los episodios es la siguiente:
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics*[width=8cm,height=4cm,keepaspectratio]{figuras/formula} 
+	\label{fig:formula Q-Tables}
+\end{figure}
+
+\textbf{Desarrollo algoritmico del problema: }
+
+Para la resolucion de este se utilizo el legnuaje de programacion Python 3.6 junto con las biblitecas de Numpy y OpenAI gym, ademas de Matplotlit para graficar los resultados.
+
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics*[width=15cm,height=20cm,keepaspectratio]{figuras/q_table_1} 
+	\label{fig:formula Q-Tables}
+\end{figure}
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics*[width=15cm,height=20cm,keepaspectratio]{figuras/q_table_2} 
+	\label{fig:formula Q-Tables}
+\end{figure}
+
+\begin{itemize}
+    \item Lineas 1-6: Se encargar de importar los paquetes necesarios de las bilbiotecas
+    \item Linea 8: Prepara el entorno FrozenLake el cual establece una matriz de 4 x4
+    \item Linea 10: declara el array Q el cual es inicializado con ceros y el tamaño de la matriz mencionada anteriormente
+    \item Linea 12-14: Configura las constantes que son el factor de aprenizaje (lr) y el factor de descuento (y), asi como el numero total de episodios que son obtenido por el entrenamiento
+    \item Las listas declaradas en las lineas 16 y 17 se usan para almacenar el total de pasos que son realizados en cada episodio y el total de recompenzas en cada episodio
+    \item Lineas 19-42: Denota el ciclo atraves el cual son puestos en marcha los episodios
+    \item Lineas 20-23: El estado del entorno es reseteado a su posicion original, la variable rAll en una variable acumuladora la cual agrega todas las recompenzas ganadas en cada episodio, la variable d es una variable booleana la cual indica si el agente cayo o llego a su destino y la variable j es una variable contadora la cual cuenta el numero de pasos en cada episodio
+    \item Lineas 26-38: Indica el espacio en el tiempo en donde el agente da 100 pasos para moverse alrededor hasta que llegue al destino o caiga dentro de un hoyo
+    \item Linea 29: aplica un ruido al valor de accion
+    \item Linea 30: Llama a la funcion step(), la cual retorna cuatro valores los cuales son: el siguiente estado, la recompenza dada por esa accion, un valor booleano el cual indica si el agente cao dentro de un hoyo o llego al objetivo, y un valor que indica informacion extra para debugging
+    \item Linea 31: se usa la formula de Q-Learning usando las variables previamente afectadas por la siguiente accion tomada
+    \item Linea 32: acumula la recompenza ganada
+    \item Linea 33: El viejo estado es rempelzado con el nuevo
+    \item Linea 35: Muestra el entorno y el movimiento del agente graficamente
+    \item Linea 37: Compara si la variable indicando que el episodio terminado es verdadera
+    \item Linea 40 y 41: Agrega informacion colectada de los pasos y las recompenzas al final de cada episodio
+    \item Lineas 43-45: imprime los resultados finales
+\end{itemize}
+
+\subsection{Q-Network: Solucion al entorno FrozenLake-v0 aplicando redes neuronales artificiales}
+
+La tabla Q para almacenar valores que influyen en la toma de desciones por parte del agente es una buena aplicacion, pero la desventaja que existe es que en problemas/entornos mas complejos y algunos de la vida real el numero de posibles acciones aumenta drasticamente y en ello una tabla de valores no es una manera viable y ademas poco escalable para resolver ese tipo de problemas. Por ello en temas complejos existen metodos compeljos como lo son las redes neuronales que son las que predicen una buena accion basado en experiencia anterior y consumen menos recursos de memoria lo cual con las tablas queda corto.
+
+Para este problema se tiene el mismo problema, entorno. pero en esta ocasion se utiliza una red neuronal gracias a la biblioteca TensorFlow. Tensorflow provee y adiciona al entorno mucha mas capacidad gracias a su computacion en grafo.
+
+El objetivo de la red es aprende a como mapear los valores Q sin la necesidad de guardar estos en una tabla.
+
+El grafico de la red neuronal a utilizar se puede replesentar en la siguiente figura:
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics*[width=10cm,height=10cm,keepaspectratio]{figuras/red} 
+	\label{fig:formula Q-Tables}
+\end{figure}
+
+\textbf{Desarrollo algoritmico del problema: }
+
+Se utiliza una red neuronal de 16 nodos en la capa de entrada y 4 nodos en la capa de salida.
+
+Un vector con codificacion one-hot toma los estados en la capa de entrada, este vector tiene una medidad de 1x16
+
+Un vector de salida de 1x4 se designa para las salidas de la red y los cuales cada nodo corresponde a una accion posible a tomar por el agente.
+
+Los pesos de la red funcionan como las celdas de la tabla Q teniendo una matriz de 16x4 como resultado de la asignacion de cada nodo de entrada y nodo de salida.
+
+Ademas el metodo de actualizacion es diferente comparado con el Q-Table que se usa una formula para actualizar el valor, en lugar de actualizar directamente la tabla, con la red neuronal se usa backpropagation y una funcion de perdida (la funcion de perdida es la suma de los cuadrados perdidos)
+
+La funcion de perdida sera la suma de los cuadrados de la perdida, donde la diferencia entre el valor Q actual predicho y el valor objetivo es computado y la gradiente pasa a traves de la red.
+
+En el aprendizaje de backpropagation cada vez que se presenta un vector de entrada de una muestra de entrnamiento, el vector de salida se compara con el valor deseado.
+
+El resultado dado de esta comparacion nos dice cuan lejos estamos del valor deseado para una entrada en particular. El objetivo de la backpropagation es minimizar la suma de el error para todas las muestras de entrenamiento, de modo que la red se comporte de una manera mas deseable ajustando los pesos de la red.
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics*[width=15cm,height=20cm,keepaspectratio]{figuras/q_net1} 
+	\label{fig:q_network code 1}
+\end{figure}
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics*[width=15cm,height=20cm,keepaspectratio]{figuras/q_net2} 
+	\label{fig:q_network code 2}
+\end{figure}
+
+\begin{itemize}
+    \item Lineas 1-6: Se importan las bibliotecas gym, numpy, random, tensorflow y matplotlib
+    \item Linea 8: Se carga el entorno FrozenLake-v0 desde el metodo make de la biblioteca de gym
+    \item Linea 10: Limpia la pila del grafo por defecto y la reinicia
+    \item Lineas 12-15: Se establece el modelo de la red neuronal, con 16 nodos en la capa de entrada y 4 nodos en la capa de salida
+    	\begin{itemize}
+    		\item Linea 12: declara un placeholder en donde se van a introducir los datos de la entrada con una forma del total de nodos en la entrada de la red que en este caso son 16, uno para cada posible estado que pueda tomar el agente
+    		\item Linea 13: se declara una variable el cual es un tensor de tamaño 16 x 4 que representan los pesos en la red neuronal, en este caso se les esta asignando un valor aleatorio que va de 0 - 0.0099999
+    		\item Linea 14: Se declara un Op con una operacion de multiplicacion de matrices las cuales corresponen a las entradas por los pesos
+    		\item Linea 15: Se declara un Op para elegir la salida con mayor valor, es decir la elegida por el agente como la mejor accion tomada
+    	\end{itemize}
+    \item Linea 17-20: Es bloque se utiliza para optimizar la red neuronal y ajustarla para de esta forma realiza aprendizaje.
+    \item Lineas 24-26: Se establecen los parametros de aprendizaje, asi como el numero de episodios con los que contara la red para aprender y obtener en el mejor camino para llegar al objetivo
+    \item Linea 27: Se establece una ruta para guardar el modelo de tensorflow para poserior visualizacion en tensorboard
+    \item Lineas 29-30: Se crean dos listas las cuales guardan el acumulado del total de recompenzas y el total de pasos realizados en cada episodio
+    \item Lineas 31-67: Se establece una sesion de tensorflow para ejecutar el modelo previamente creado
+    \item Linea 33: Se ejecuta el Op en el cual se inicializan todas las variables previamente declaradas
+    \item Linea 34: Con esa instruccion Tensorflow guarda de manera local en un archivo el modelo del grafo realizado en el programa para abrirlo posteriormente en la herramienta tensorboard, ademas se especifica la ruta antes establecida en la variable logs\_path
+	\item Lineas 36-67: bucle de los episodios realizados que en este caso son 2000
+	\item Linea 37: Esta instruccion hace que el agente en el entorno actual regrese al estado inicial del mismo
+	\item Linea 38-40: reinicia las variables contadora de los pasos realizados por episodio y el total de recompenzas dadas por dicho episodio, ademas que pone en falso la variable que determina si el episodio termino
+	\item Lineas 42-64: Determina el bucle en el cual se realizan determinados pasos para cada episodio, que en este caso son 100
+	\item Linea 45: Ejecuta los Ops los cuales se encargan de la multiplicacion de las matrices de los pesos por las entradas, asi como codifica de forma one-hot las entradas, asi como toma la mejor accion a tomar en dicho procedimiento definido por la red
+	\item Linea 62-64: Esas acciones definen si el agente toma una accion random, dandonde de inicio 10 \% de probabilidad de tomar una de estas, y esto va reduciendose conforme pasen episodios
+	\item Linea 50: se toma determina accion definida por la red en la linea 45 y esta sele pasa al entorno, retornando este los siguientes valores: siguiente estado del agente, recompenza dada, variable que determina si el entorno fue terminado e informacion de debbugin
+	\item Linea 52: Obtiene los valores de salida para la siguiente accion
+	\item Lineas 54-56: Optiene el valor optimo para la accion realizada basandose en el actual valor Q (que son las salidas de la red) y el siguiente
+	\item Linea 58: Optimiza la red, en este proceso se podria decir que la red esta aprendiendo, este Op ejecuta el bloque de codigo anterior definido en la fase de construccion, tomando una formula sacando el valor de error y optimizando los pesos de la red gracias a la gradiente descendente
+	\item Linea 59: Se almacena/acumula la recompenza ganada en el presente episodio 
+	\item Linea 60: El estado actual, toma el siguiente optenido por el entorno gracias a la bilbioteca OpenAI gym
+	\item Lineas 62-64: Condicional que termina el ciclo del episodio si el entorno devuelve true en la variable que almacena si el entorno termino
+	\item Linea 63: modifica el valor de la probabilidad de tomar una accion aleatoria en las lineas 100-101 reduciendolo
+	\item Linea 66-67: Agrega a las listas que almacenan los datos de pasos totales y recompenzas dadas en el problemas las variables que almacenan dicha informacion en cada episodio
+	\item Lineas 69-72: Imprime el rednimiento dado por la aplicacion y la red con una grafica con la ayuda de la bilbioteca de matplotlib
+\end{itemize}
+
+\subsection{Entorno NChain-v0}
+
+NChain-v0 es otro entorno de la bilbioteca de OpenAI gym el cual cuenta con un espacio de 5 estados y 2 posibles acciones.
+
+\textbf{Descripcion:}
+
+\begin{itemize}
+    \item Se tiene una cadena de 5 estados
+    
+    \item Los arcos son rotulados con las acciones que causa la transicion de estado y su recompenza asociada
+    
+    \item Visualmente la accion abstracta 1 hace que la accion a en el entorno se lleve a cabo
+    
+    \item La accion abstracta 2 causa la accion en el entorno b
+    
+    \item Con posibilidad de 0.2, el agente "se desliza" y su accion tiene el efecto opuesto
+    
+    \item El comportamiento optimo es elegir siempre la accion 1 (aunque esto a veces da como resultado las transiciones etiquetadas con b)
+    
+    \item Una vez que se alcanza el estado 5, se recibe una recompenza de 10 antes que el agente resbale y regrese al estado 1
+    
+    \item cada que cae la accion 2 el agente vuelve al estado 1 del entorno
+    
+\end{itemize}
+
+Este problema requiere de una exploracion efectiva y una estimacion precisa de la recompenza descontada
+
+\textbf{Acciones:}
+
+\begin{itemize}
+    \item a o 1.- Hacia adelate
+    
+    \item b o 2.- Hacia atras
+    
+\end{itemize}
+
+\textbf{No. Estados:}
+
+\begin{itemize}
+    \item 5
+\end{itemize}
+
+\textbf{Recompenzas:}
+
+\begin{itemize}
+    \item +0 accion hacia adelante
+    \item +2 si se resbala y empeza en el estado 1
+    \item +10 si llega al estado 5
+\end{itemize}
+
+Graficamente el entorno se veria asi:
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics*[width=12cm,height=8cm,keepaspectratio]{figuras/nchain} 
+	\caption{Tablero del NChain}
+	\label{fig:N-Chain}
+\end{figure}
+
+
+\subsection{Solucion al entorno NChain-v0 aplicando redes neuronales}
+Para este problema se tiene contemplado reutilizar el problema anteriormente trato en el cual se aplicaba una red neuronal de una capa, en la cual tenia 16 nodos de entrada y 4 nodos de salida.
+
+Para este problema se tienen 2 posibles acciones a tomar las cuales son si el agente va hacia adelante o hacia atras, por los cual se requiere una capa de salida con dos nodos en la red neuronal. Ademas de esto se cuenta con 5 posibles estados que puede tomar el agente, por ello, se tiene una capa de entrada de 5 nodos los cuales representaran estos.
+
+Por lo cual se tienen una capa de entrada con 5 nodos y una capa de salida con 2 nodos, esto da como resultado una matriz de pesos con una forma de 5x2, como lo muestra el siguiente grafico:
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics*[width=10cm,height=10cm,keepaspectratio]{figuras/red2} 
+	\label{fig:red2}
+\end{figure}
+
+Este entorno en particular al momento de realizar una accion, no devuelve una variable de terminacion del episodio por ello, no es necesario colocar la condicion que realizaba este proceso como en el codigo del problema anterior. La solucion es muy parecida al problema anterior solo ajustando pequeños detalles para este problema.
+
+\textbf{Desarrollo algoritmico del problema:}
+
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics*[width=15cm,height=20cm,keepaspectratio]{figuras/nchain1} 
+	\label{fig:nchain code 1}
+\end{figure}
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics*[width=15cm,height=20cm,keepaspectratio]{figuras/nchain2} 
+	\label{fig:nchain code 2}
+\end{figure}
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics*[width=15cm,height=20cm,keepaspectratio]{figuras/nchain3} 
+	\label{fig:nchain code 3}
+\end{figure}
+
+\begin{itemize}
+    \item Lineas 1-6: Se importan las bibliotecas gym, numpy, random, tensorflow y matplotlib
+    \item Linea 8: Se carga el entorno NChain-v0 desde el metodo make() de la biblioteca de gym
+    \item Linea 10: Se reinicia el entorno con el metodo reset() el cual coloca al agente en su posicion origial de inicio 
+    \item Linea 12: Limpia la pila del grafo por defecto y la reinicia    
+    \item Lineas 14-17: Se establece el modelo de la red neuronal, con 5 nodos en la capa de entrada la cual es llamda 'x' y 2 nodos en la capa de salida como se puede apreciar en la linea 19
+    	\begin{itemize}
+    		\item Linea 14: declara un placeholder en donde se van a introducir los datos de la entrada con una forma del total de nodos en la entrada de la red que en este caso son 5, uno para cada posible estado que pueda tomar el agente
+    		\item Linea 15: se declara una variable el cual es un tensor de tamaño 5 x 2 que representan los pesos en la red neuronal, en este caso se les esta asignando un valor aleatorio que va de 0 - 0.0099999
+    		\item Linea 16: Se declara un Op con una operacion de multiplicacion de matrices las cuales corresponen a las entradas por los pesos
+    		\item Linea 17: Se declara un Op para elegir la salida con mayor valor, es decir la elegida por el agente como la mejor accion tomada
+    	\end{itemize}
+    \item Linea 19-22: Es bloque se utiliza para optimizar la red neuronal y ajustarla para de esta forma realiza aprendizaje.
+    \item Lineas 26-28: Se establecen los parametros de aprendizaje, asi como el numero de episodios con los que contara la red para aprender y obtener en el mejor camino para llegar al objetivo
+    \item Linea 24: Se establece una ruta para guardar el modelo de tensorflow para poserior visualizacion en tensorboard
+    \item Lineas 30-31: Se crean dos listas las cuales guardan el acumulado del total de recompenzas y el total de pasos realizados en cada episodio
+    \item Lineas 32-65: Se establece una sesion de tensorflow para ejecutar el modelo previamente creado
+    \item Linea 34: Se ejecuta el Op en el cual se inicializan todas las variables previamente declaradas
+    \item Linea 36: Con esa instruccion Tensorflow guarda de manera local en un archivo el modelo del grafo realizado en el programa para abrirlo posteriormente en la herramienta tensorboard, ademas se especifica la ruta antes establecida en la variable logs\_path
+	\item Lineas 38-65: bucle de los episodios realizados que en este caso son 10
+	\item Linea 40: Esta instruccion hace que el agente en el entorno actual regrese al estado inicial del mismo
+	\item Linea 40-42: reinicia las variables contadora de los pasos realizados por episodio y el total de recompenzas dadas por dicho episodio, ademas que pone en falso la variable que determina si el episodio termino
+	\item Lineas 45-65: Determina el bucle en el cual se realizan determinados pasos para cada episodio, que en este caso son 10
+	\item Linea 48: Ejecuta los Ops los cuales se encargan de la multiplicacion de las matrices de los pesos por las entradas, asi como codifica de forma one-hot las entradas, asi como toma la mejor accion a tomar en dicho procedimiento definido por la red
+	\item Linea 50-51: Esas acciones definen si el agente toma una accion random, teninedo como probabilidad de 10\% a que tome una decision aleatoria, la cual no disminuye conforme pasan los episodios, debido a la facilidad del entorno
+	\item Linea 53: se toma determina accion definida por la red en la linea 48 y esta sele pasa al entorno, retornando este los siguientes valores: siguiente estado del agente, recompenza dada, variable que determina si el entorno fue terminado e informacion de debbugin
+	\item Linea 55: Obtiene los valores de salida para la siguiente accion
+	\item Lineas 57-59: Optiene el valor optimo para la accion realizada basandose en el actual valor Q (que son las salidas de la red) y el siguiente
+	\item Linea 61: Optimiza la red, en este proceso se podria decir que la red esta aprendiendo, este Op ejecuta el bloque de codigo anterior definido en la fase de construccion, tomando una formula sacando el valor de error y optimizando los pesos de la red gracias a la gradiente descendente
+	\item Linea 62-63: Se almacena/acumula la recompenza ganada en el presente episodio 
+	\item Linea 63: El estado actual, toma el siguiente optenido por el entorno gracias a la bilbioteca OpenAI gym
+	\item Linea 64-65: Agrega a las listas que almacenan los datos de pasos totales y recompenzas dadas en el problemas las variables que almacenan dicha informacion en cada episodio
+	\item Lineas 67-73: Imprime el rendimiento dado por la aplicacion y la red con una grafica con la ayuda de la bilbioteca de matplotlib
+\end{itemize}
+
+

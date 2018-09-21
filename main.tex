@@ -1,0 +1,142 @@
+\documentclass[12pt]{article}
+\usepackage[spanish]{babel}
+\usepackage[left=2.5cm,top=2.0cm,right=2.5cm,bottom=3.0cm]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage{url} % ACENTOS
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{xcolor}
+\usepackage{multirow}
+\usepackage{listings}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{pdfpages} % Incluir PDF en documento en LATEX
+\usepackage[backend=bibtex,sorting=none]{biblatex}
+\setcounter{biburllcpenalty}{7000}
+\setcounter{biburlucpenalty}{8000}
+\addbibresource{referencias.bib} % ARCHIVO DE BIBLIOGRAFÍA
+\usepackage[bookmarks=true,breaklinks=true,bookmarksopen=false,colorlinks=true,linkcolor=blue]{hyperref}
+\usepackage[hyphenbreaks]{breakurl}
+\usepackage{datetime}
+\newdateformat{specialdate}{\twodigit{\THEDAY}-\twodigit{\THEMONTH}-\THEYEAR}
+%\newdateformat{specialdate}{\twodigit{\THEDAY}-\THEYEAR}
+\date{\specialdate\today}
+\newcommand{\HRule}{\rule{\linewidth}{0.25mm}}
+% CONSTANTES NECESARIAS PARA EL DOCUMENTO ---> MODIFIQUEN A SU CRITERIO
+\newcommand{\elola}        {el}  %Hombres cambien LA por EL
+\newcommand{\OA}           {o}  %Hombres cambien A por O
+\newcommand{\ncuatrimestre}{Enero-Abril 2018}
+
+\newcommand{\nproyecto}           {Sistema de envío de recomendaciones para la concientización de la diabetes en personas adultas.}
+
+\newcommand{\nproyectoheader}     {Chatbot para la concientización de la Diabetes}
+\newcommand{\nalumnoA}            {Wbario, Torres, Rojas, Echartea y Muñiz}
+\newcommand{\ncarrera}            {Ingeniería en Tecnologías de la Información}
+\newcommand{\nasesorinstitucional}{Dr. Hector Hugo Áviles Arriaga}
+\newcommand{\fecha}               {Septiembre de 2018}
+\newcommand{\fechacarta}		  {12 de Septiembre de 2017}
+\newcommand{\separacionCorta}{0.0cm}
+\newcommand{\separacionLarga}{0.5cm}
+\usepackage[overload]{textcase}
+\newcommand{\iemph}[1]{\MakeTextUppercase{#1}}
+\pagestyle{fancy}
+\headheight 35pt
+\fancyhead{} % Clear all header fields
+\fancyhead[L]{\includegraphics[height=1.5cm]{figuras/CGUTP2.png}}%
+\fancyhead[C]{\nproyectoheader}%
+\fancyhead[R]{\includegraphics[height=1.5cm]{figuras/LogoUPV.png}}%
+\fancyfoot[R]{\thepage} % Clear all footer fields 
+\fancyfoot[C]{}
+\fancyfoot[L]{}
+\DefineBibliographyStrings{english}{%
+  references = {Referencias},% replace "references" with "bibliography"  for `book`/`report`
+}
+\addto\captionsenglish{%
+  \renewcommand{\figurename}{Figura}%
+  \renewcommand{\tablename}{Cuadro}%
+} 
+\usepackage{wallpaper}
+\begin{document}
+%-----------------------------------------------------------------------------------------------------------------
+% PAGINA 1 - PORTADA
+\setcounter{page}{1}
+\pagenumbering{roman}
+\thispagestyle{empty}
+\begin{center}
+\begin{tabular}{cp{8cm}c}
+\includegraphics[height=2.25cm]{figuras/CGUTP2.png} & 
+& \includegraphics[height=2.25cm]{figuras/LogoUPV.png}   \\
+\end{tabular}
+\Large \textbf{UNIVERSIDAD POLITÉCNICA DE VICTORIA}
+\vspace{0.5cm}
+\hrule
+\vspace{0.1cm}
+\hrule
+\vspace{2.0cm}
+\textbf{\iemph{\nproyecto}} \\[\separacionLarga]
+CARRERA: \\
+\textbf{\iemph{\ncarrera}} \\[\separacionLarga]
+\vspace{1cm}
+PRESENTAN: \\[\separacionCorta]
+\textbf{\iemph{\nalumnoA}}\\[\separacionLarga]
+\vspace{1.5cm}
+REVISOR: \\[\separacionCorta]
+\textbf{\iemph{\nasesorinstitucional}} \\[\separacionCorta]
+\vspace{2.0cm}
+\end{center}
+\begin{flushright}
+\iemph{Ciudad Victoria, Tamaulipas, \fecha}
+\end{flushright}
+\HRule 
+%-----------------------------------------------------------------------------------------------------------------
+% PAGINA 5 - RESUMEN EN ESPAÑOL
+\clearpage
+\section*{\centering Resumen}
+\addcontentsline{toc}{section}{Resumen}
+\input{secciones/Resumen.tex} \\
+\textbf{Palabras claves: Chatbot, Diabetes.}
+%-----------------------------------------------------------------------------------------------------------------
+% PAGINA 6 - RESUMEN EN INGLES
+%\clearpage
+%\section*{\centering Summary}
+%\addcontentsline{toc}{section}{Summary}
+%\input{secciones/Summary.tex}
+%\textbf{Keywords}: Artificial Neural Networks, Reinforcement Learning, Q-Learning.
+%-----------------------------------------------------------------------------------------------------------------
+% INDICE
+\clearpage
+\addcontentsline{toc}{section}{Índice}
+\renewcommand\contentsname{Índice}
+\tableofcontents
+%-----------------------------------------------------------------------------------------------------------------
+% CAPITULOS
+\clearpage
+\pagenumbering{arabic}
+\setcounter{page}{1}
+\input{secciones/Introduccion.tex}
+\clearpage
+%\input{secciones/MarcoTeorico.tex}
+%\clearpage
+%\input{secciones/DesarrolloDelProblema.tex}
+%\clearpage
+%\input{secciones/Resultados.tex}
+%\clearpage
+%\input{secciones/Conclusiones.tex}
+%\clearpage
+%\addcontentsline{toc}{section}{Índice de figuras}
+%\renewcommand\listfigurename{Índice de figuras}
+
+%\listoffigures
+%\clearpage
+%\addcontentsline{toc}{section}{Índice de cuadros}
+%\renewcommand\listtablename{Índice de cuadros}
+%\listoftables
+%-----------------------------------------------------------------------------------------------------------------
+% REFERENCIAS
+\clearpage
+%\Urlmuskip=0mu plus 1mu\relax
+%\addcontentsline{toc}{section}{Referencias} 
+%\printbibliography
+
+\end{document}
+\grid
